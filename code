@@ -1,0 +1,137 @@
+
+# N1
+
+def biggestCoffeeInFridge(itemsInFridge):
+    coffee = [item for item in itemsInFridge if item > 0]
+    if coffee:
+        return max(coffee)
+    else:
+        return 0
+
+#print(biggestCoffeeInFridge([1,34,1,5,23,-13,12,0,324,1,-1000])) # print 324
+#print(biggestCoffeeInFridge([1,0,3])) # print 3
+#print(biggestCoffeeInFridge([-1,-2,-3])) # print 0
+
+# N2
+
+def isWorkingAllNight(itemsInFridge, cofeinRequired):
+    coffee = []
+    while itemsInFridge:
+        max_coffee = biggestCoffeeInFridge(itemsInFridge)
+        if max_coffee == 0:
+            break
+        coffee.append(max_coffee)
+        itemsInFridge.remove(max_coffee)
+        if sum(coffee) > cofeinRequired + cofeinRequired * 0.10:
+            return 1
+        elif sum(coffee) < cofeinRequired + cofeinRequired * 0.10 and sum(coffee) >= cofeinRequired: 
+            return 0
+    return -1
+
+#print(isWorkingAllNight([1, -3, 1, 10], 20)) # print -1
+#print(isWorkingAllNight([1, -3, 9, 10], 20)) # print 0
+#print(isWorkingAllNight([13,-3,13,10], 20)) # print 1
+
+# N3
+
+def whenCallSupplier(itemsInFridge, consumptions):
+    total_cofein = sum(item for item in itemsInFridge if item > 0)
+    total_consuption = 0
+    
+    for day in range(len(consumptions)):
+        total_consuption += consumptions[day]
+        if total_cofein < total_consuption:
+            return day
+    return -1
+
+
+#print(whenCallSupplier([1, -3, 1, 10], [20, 30, 1, 2, 0, 15]))  # Should print 0
+#print(whenCallSupplier([1, -3, 1, 10], [5, 4, 1, 2, 0, 15]))  # Should print 5
+#print(whenCallSupplier([1, -3, 1, 10], [7, 8, 1, 2, 0, 15]))  # Should print 1
+#print(whenCallSupplier([1, -3, 1, 10], [2, 3, 1, 2, 0, 3]))  # Should print -1
+#print(whenCallSupplier([1, -3, 1, 2, 1], [2, 9, 1, 2]))  # Should print 1
+#print(whenCallSupplier([1, -3, 3, 2, 1], [2, 5, 1, 2]))  # Should print 2
+
+# N4
+
+class Item:
+    def __init__(self, coffeeCapacity, number):
+        self.name = coffeeType if coffeeCapacity > 0 else healthyFoodType
+        self.coffeeCapacity = coffeeCapacity
+        self.number = number
+
+    def __repr__(self):
+        return self.name + "(" + str(self.coffeeCapacity) + "," + str(self.number) + ")"
+    
+
+    
+healthyFoodType = "HealthyFood"
+coffeeType = "Coffee"
+
+def aggregate(items, item):
+    new_items = items.copy()
+    for existing_item in new_items:
+        if existing_item.coffeeCapacity == item.coffeeCapacity:
+            existing_item.number += item.number
+            return new_items
+    new_items.append(item)
+    return new_items
+
+#itemsToAggregate = [Item(20,1), Item(10,2), Item(-10,3)]
+#print(aggregate([], Item(20,1))) # print [Coffee(20,1)]
+#print(aggregate(itemsToAggregate, Item(20,2))) # print [Coffee(20,3), Coffee(10,2), HealthyFood(-10,3)]]
+#print(aggregate(itemsToAggregate, Item(11,2))) # print [Coffee(20,1), Coffee(10,2), HealthyFood(-10,3), Coffee(11,2)]]
+
+def convertFridge(itemsInFridge):
+    items = []
+    for coffeeCapacity in itemsInFridge:
+        item = Item(coffeeCapacity, 1)
+        items = aggregate(items, item)  
+    return items
+
+#print(convertFridge([0,1,2,4,1,0,-1])) # print [HealthyFood(0,2), Coffee(1,2), Coffee(2,1, Coffee(4,1), HealthyFood(-1,1)]
+#print(convertFridge([1,1,2,4,1,0,-1])) # print [Coffee(1,3), Coffee(2,1), Coffee(4,1), HealtyFood(0,1), HealthyFood(-1,1)]]
+#print(convertFridge([])) # print []
+
+# N5 and N6
+
+def removeItem(items, cofeinCapacityInItem):
+    for item in items:
+        if item.coffeeCapacity == cofeinCapacityInItem:
+            if item.number > 1:
+                item.number -= 1
+                return items
+            else:
+                items.remove(item)
+    return items
+
+def isEmpty(Items):
+    coffee = [item for item in Items if item.coffeeCapacity > 0]
+    if coffee:
+        return False
+    else:
+        return True
+
+def isFridgeHealthy(Items):
+    items = [item for item in Items]
+    cofein = sum(item.coffeeCapacity for item in items)
+    if cofein > 0:
+        return False
+    else:
+        return True
+
+def countCofeinCapacity(Items):
+    coffee = [item for item in Items if item.coffeeCapacity > 0]
+    cofein = sum(item.coffeeCapacity * item.number for item in coffee)
+    return cofein
+
+items = [Item(20,1), Item(10,2), Item(-10,3)]
+#print(removeItem(items, 10)) # print [Coffee(20,1), Coffee(10,1), HealthyFood(-10,3)]
+#print(removeItem(items, 20)) # print [Coffee(10,2), HealthyFood(-10,3)]
+#print(removeItem(items, 2)) # print [Coffee(20,1), Coffee(10,2), HealthyFood(-10,3)]
+#print(isEmpty(items)) # print False
+#print(isEmpty([])) # print True
+#print(isEmpty([Item(-10,3)])) # print True
+#print(isFridgeHealthy(items)) # print False
+#print(isFridgeHealthy([Item(10,2), Item(-10,3)])) # print True
+#print(countCofeinCapacity(items)) # print 40
